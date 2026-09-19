@@ -30,8 +30,19 @@ app.get("/",async(req,res)=>{
   let data=await fs.readFile("expenses.json","utf8");
   let expenses=JSON.parse(data);
   let expenseHtml="";
-  expenseHtml+=`<style>
-  small{display:block;color:#909399;font-size:13px;line-height:2;}
+  expenseHtml+=`<meta name="viewport" content="width=device-width, initial-scale=1">`;
+expenseHtml+=`<style>
+body{font-family:system-ui,"Microsoft YaHei",sans-serif;background:#f4f5f7;color:#222;max-width:560px;margin:0 auto;padding:16px;line-height:1.6;}
+h1{font-size:24px;margin:8px 0 16px;}
+h2{font-size:20px;margin:0 0 6px;}
+h3{font-size:18px;margin:20px 0 0;padding-top:14px;border-top:1px solid #e6e8eb;}
+form{background:#fff;padding:16px;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+input,select{display:block;width:100%;box-sizing:border-box;font-size:16px;padding:10px 12px;margin:6px 0 16px;border:1px solid #dcdfe6;border-radius:10px;background:#fff;color:#222;}
+button{display:block;width:100%;box-sizing:border-box;font-size:16px;font-weight:600;padding:12px;color:#fff;background:#2f7cf6;border:0;border-radius:10px;cursor:pointer;}
+div{background:#fff;padding:14px 16px;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-top:12px;}
+small{display:block;font-size:13px;color:#909399;}
+a{font-size:13px;color:#e34d59;text-decoration:none;}
+.tag{display:inline-block;margin:10px 8px 0 0;padding:4px 12px;font-size:13px;color:#2f7cf6;background:#eaf2ff;border-radius:999px;}
   </style>`;
   expenseHtml+='<h1>记账软件</h1>';
   expenseHtml+='<form action="/expense" method="POST">';
@@ -62,7 +73,7 @@ app.get("/",async(req,res)=>{
     expenseHtml+='</div>';
   }
   for(let cat in byCategory){
-    expenseHtml+='<small>'+cat+':'+byCategory[cat].toFixed(2)+'</small>';
+    expenseHtml+='<span class="tag">'+cat+':'+byCategory[cat].toFixed(2)+'</span>';
   }
   expenseHtml+='<h3>总支出:'+total.toFixed(2)+'</h3>';
   res.send(expenseHtml);
