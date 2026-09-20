@@ -3,9 +3,13 @@ const app = express();
 const fs = require("fs").promises;
 const DATA_FILE = "expenses.json";
 async function readExpenses(){
+ try{
   const data=await fs.readFile(DATA_FILE,"utf8");
-  const expenses=JSON.parse(data);
-  return expenses;
+return JSON.parse(data);
+ }catch(err){
+  if (err.code==="ENOENT"){return [];}
+  throw err;
+ }
 };
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,15 +24,13 @@ app.get("/expenses", async (req, res) => {
 });
 app.get("/delete/:id",async(req,res)=>{
   let id=Number(req.params.id);
-  let data=await fs.readFile("expenses.json","utf8");
-  let expenses=JSON.parse(data);
+  let expenses=await readExpenses();
   let rest=expenses.filter(e=>e.id!==id);
-  await fs.writeFile("expenses.json",JSON.stringify(rest));
+  await fs.writeFile(DATA_FILE,JSON.stringify(rest));
   res.redirect("/");
 });
 app.get("/",async(req,res)=>{
-  let data=await fs.readFile("expenses.json","utf8");
-  let expenses=JSON.parse(data);
+  let expenses=await readExpenses();
   let expenseHtml="";
   expenseHtml+=`<meta name="viewport" content="width=device-width, initial-scale=1">`;
 expenseHtml+=`<style>
@@ -78,13 +80,13 @@ a{font-size:13px;color:#e34d59;text-decoration:none;}
   expenseHtml+='<h3>总支出:'+total.toFixed(2)+'</h3>';
   res.send(expenseHtml);
 })
-app.listen(3006, () => {
-  console.log("记账软件已启动: http://localhost:3006");
+const PORT=process.env.PORT||3006;
+app.listen(PORT, () => {
+  console.log("记账软件已启动: http://localhost:"+PORT);
 });
 app.post("/expense",async(req,res)=>{
   try{let amount=req.body.amount;
-       let data=await fs.readFile("expenses.json","utf8")
-       let expenses=JSON.parse(data);
+       let expenses=await readExpenses();
        let newExpense={amount:Number(amount),
        id:Date.now(),
        time:new Date().toLocaleString(),
@@ -92,8 +94,12 @@ app.post("/expense",async(req,res)=>{
        note:req.body.note,
        };
        expenses.push(newExpense);
-       await fs.writeFile("expenses.json",JSON.stringify(expenses));
+       await fs.writeFile(DATA_FILE,JSON.stringify(expenses));
        res.redirect("/");}catch(err){console.log(err);
         res.status(500).send("服务器错误");
        }
+    });
+    app.use((err,req,res,next)=>{
+      console.error(err);
+      res.status(500).send("服务器出错了,请稍后重试");
     });
