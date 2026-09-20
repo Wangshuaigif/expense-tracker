@@ -1,0 +1,11 @@
+# 依赖包（别人 npm install 就能重建）
+node_modules/
+
+# 私人账目数据（不进代码仓库）
+expenses.json
+
+# 系统 / 编辑器杂项
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

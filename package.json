@@ -1,0 +1,24 @@
+{
+  "name": "expense-tracker",
+  "version": "1.0.0",
+  "description": "记账软件 | Node.js + Express 实现的记账 Web 应用",
+  "main": "app.js",
+    "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "记账",
+    "expense-tracker",
+    "nodejs",
+    "express"
+  ],
+  "author": "Wangshuaigif",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
